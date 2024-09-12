@@ -44,6 +44,14 @@ public class Class1
             ISheet StudentsSheet = studentsBook.GetSheetAt(0);
             IRow StudentsRow = StudentsSheet.GetRow(0);
             ICell studentsCell = StudentsRow.GetCell(0);
+            ICellStyle st = resultWorkbook.CreateCellStyle();
+            IFont font = resultWorkbook.CreateFont();
+            font.FontName = "Times New Roman";
+            font.FontHeight = 650;
+            XSSFColor color = new(IndexedColors.Orange);
+
+            st.Alignment = HorizontalAlignment.Center;
+            st.LeftBorderColor = color.Indexed;
             if (answSheet == null && StudentsSheet == null)
                 Console.WriteLine("Check files for mistakes");
             answRow = answSheet.GetRow(0);
@@ -62,6 +70,8 @@ public class Class1
             if (skip != true)
             {
                 IRow resultRow;
+                string resultString = "";
+                string res = "";
 
                 int i = 0;
                 while (true)
@@ -96,19 +106,26 @@ public class Class1
                         studentsCell = StudentsRow.GetCell(0);
                         if (answerCell != null)
                         {
-                            if (answerCell.ToString() == studentsCell.ToString())
-                                resultCell.SetCellValue($"{i+1}, +");
-                            else resultCell.SetCellValue($"{i+1}, -");
+                           // if (answerCell.ToString() == studentsCell.ToString())
+                           //     resultCell.SetCellValue($"{i+1}, +");
+                           // else resultCell.SetCellValue($"{i+1}, -");
+                           for(int j = 0; j < answerCell.ToString().Length; j++)
+                            {
+                                if (j > studentsCell.ToString().Length - 1)
+                                    resultString += "-, ";
+                                else if (studentsCell.ToString()[j] == answerCell.ToString()[j])
+                                    resultString += "+, ";
+                                else
+                                    resultString += "-, ";
+                                res = resultString.Remove(resultString.Length - 1);
+                                resultCell.SetCellValue(res);
+                                
+                            }
+                            res = "";
+                            resultString = "";
 
                         }
-                        ICellStyle st = resultWorkbook.CreateCellStyle();
-                        IFont font = resultWorkbook.CreateFont();
-                        font.FontName = "Times New Roman";
-                        font.FontHeight = 650;
-                        XSSFColor color = new(IndexedColors.Orange);
-
-                        st.Alignment = HorizontalAlignment.Center;
-                        st.LeftBorderColor = color.Indexed;
+                        
                         resultRow.RowStyle = st;
                         resultRow.RowStyle.SetFont(font);
 
